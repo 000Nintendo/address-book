@@ -1,3 +1,4 @@
+import { Theme } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
 import React from "react";
@@ -7,11 +8,13 @@ interface ILayoutContainer {
   children: any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     contentContainer: {
-      maxWidth: 1280,
+      maxWidth: 1240,
       margin: "auto",
+      paddding: '0px 100px'
     },
   })
 );

@@ -6,6 +6,7 @@ import App from "./App";
 import "./i18n/config";
 
 import "./index.css";
+import PersistedWrapper from "./PersistedWrapper";
 import theme from "./utils/theme";
 
 const root = ReactDOM.createRoot(
@@ -15,7 +16,9 @@ root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <App />
+        <PersistedWrapper>
+          <App />
+        </PersistedWrapper>
       </BrowserRouter>
     </ThemeProvider>
   </React.StrictMode>

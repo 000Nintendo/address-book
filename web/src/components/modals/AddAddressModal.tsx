@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { routeConstants } from "../../constants/constants";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addressActions } from "../../redux/features/addresse";
+import { addUpdateAddressModalSelector } from "../../redux/selectors/address";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,39 +27,27 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const AddAddressModal = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+
+  const modalState = useSelector(addUpdateAddressModalSelector);
 
   const classes = useStyles();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [state, setState] = useState({
     isModalOpen: false,
   });
 
-  useEffect(() => {
-    const pathname = window.location.href;
-    if (
-      pathname.includes(routeConstants.addAddress) ||
-      pathname.includes(routeConstants.updateAddress)
-    ) {
-      setState({
-        isModalOpen: true,
-      });
-      return;
-    }
-
-    setState({
-      isModalOpen: false,
-    });
-    return;
-  }, location.pathname);
-
-
   const handleCloseModal = () => {
-    window.history.back();
-  }
+    dispatch(addressActions.closeAddUpdateAddressModal({}));
+  };
 
   return (
-    <Dialog open={state.isModalOpen} maxWidth="md" fullWidth onClose={() => handleCloseModal()}>
+    <Dialog
+      open={modalState.isOpen}
+      maxWidth="md"
+      fullWidth
+      onClose={() => handleCloseModal()}
+    >
       <DialogTitle>Add address</DialogTitle>
       <DialogContent sx={{}}>
         <Box>
@@ -101,7 +90,9 @@ const AddAddressModal = () => {
           <Typography>Add address</Typography>
         </Button>
 
-        <Button variant="outlined" onClick={handleCloseModal}>Cancel</Button>
+        <Button variant="outlined" onClick={handleCloseModal}>
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

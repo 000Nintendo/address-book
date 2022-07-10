@@ -14,11 +14,11 @@ code {
 
 
 .toast-container {
-  font-family: 'montserrat_regular' !important;
+  /* font-family: 'montserrat_regular' !important; */
 }
 
 .toast-container > div {
-  font-family: 'montserrat_regular' !important;
+  /* font-family: 'montserrat_regular' !important; */
   font-size: 14px;
   text-align: start;
   line-height: 120%;
