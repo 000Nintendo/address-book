@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import LayoutContainer from "../../components/layout/LayoutContainer";
 import AddAddressModal from "../../components/modals/AddAddressModal";
 import { addressActions } from "../../redux/features/addresse";
+import AddressList from "./AddressList";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,13 +32,17 @@ const Home = () => {
       <AddAddressModal />
       <LayoutContainer>
         <Box className={classes.addAddressContainer} mt={3}>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={openAddUpdateAddressModal}
-          >
-            Add new address
-          </Button>
+          <Box sx={{ padding: "0px 20px" }}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={openAddUpdateAddressModal}
+            >
+              Add new address
+            </Button>
+          </Box>
+
+          <AddressList />
         </Box>
       </LayoutContainer>
     </Box>
