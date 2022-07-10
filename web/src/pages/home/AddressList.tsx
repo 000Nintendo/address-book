@@ -1,95 +1,93 @@
-import {
-  Box,
-  Typography,
-  Grid,
-} from "@mui/material";
+import { useQuery } from "@apollo/client";
+import { Box, Typography, Grid, CircularProgress } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { IAddressData } from "../../@types/interfaces";
+import AddAddressModal from "../../components/modals/AddAddressModal";
+import { GET_ADDRESSES } from "../../graphql/queries/address";
+import { Toast } from "../../utils/toast";
 import AddressCard from "./AddressCard";
 
-const addressList = [
-  {
-    id: "62cae863496abb34c89c80d0",
-    name: "John",
-    phone: "1234567890",
-    updated_at: "1657464931251",
-    created_at: "1657464931251",
-  },
-  {
-    id: "62cae86b496abb34c89c80d5",
-    name: "John",
-    phone: "1234567891",
-    updated_at: "1657464939409",
-    created_at: "1657464939409",
-  },
-  {
-    id: "62cae935496abb34c89c80db",
-    name: "John",
-    phone: "7069993460",
-    updated_at: "1657465141467",
-    created_at: "1657465141467",
-  },
-  {
-    id: "62cae942496abb34c89c80de",
-    name: "Praksh kalsariya",
-    phone: "7069993461",
-    updated_at: "1657465154828",
-    created_at: "1657465154828",
-  },
-  {
-    id: "62cae951496abb34c89c80e1",
-    name: "Ashvin Solanki",
-    phone: "8780607383",
-    updated_at: "1657465169947",
-    created_at: "1657465169947",
-  },
-  {
-    id: "62cae96a496abb34c89c80e5",
-    name: "Anil Solanki",
-    phone: "9727714552",
-    updated_at: "1657465194109",
-    created_at: "1657465194109",
-  },
-];
-
 const AddressList = () => {
+  const { t } = useTranslation();
+  const { loading, data, refetch } = useQuery<{
+    getAddresses: IAddressData[];
+  }>(GET_ADDRESSES, {
+    onError(error) {
+      console.log(error.message);
+      Toast.error(error.message);
+    },
+  });
+
+  const handleRefetch = () => {
+    refetch();
+  };
+
   return (
     <Box mt={2}>
-      {addressList?.length === 0 || !addressList?.length ? (
+      <AddAddressModal handleSuccess={handleRefetch} />
+      {loading ? (
         <Box
-          mt={8}
-          sx={{ width: "100%", justifyContent: "center", display: "flex" }}
+          sx={{
+            width: "fit-content",
+            margin: "auto",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
         >
           <Box
-            sx={{
-              width: "fit-content",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
+            sx={{ position: "relative", marginRight: 2, textAlign: "center" }}
           >
-            <Box mb={2} sx={{ display: "flex", justifyContent: "center" }}>
-              <img src="/assets/icons/list-icon.png" alt="" />
-            </Box>
-            <Typography>Your Address Book Is Empty!</Typography>
+            <CircularProgress size="30px" />
+            <Typography mt={2} align="center">
+              {t("Fetching data please wait")}
+            </Typography>
           </Box>
         </Box>
-      ) : (
-        <Grid container>
-          {addressList.map((address) => (
-            <Grid
-              item
-              key={address.id}
-              sm={3}
+      ) : null}
+
+      {!loading ? (
+        data?.getAddresses?.length === 0 || !data?.getAddresses?.length ? (
+          <Box
+            mt={8}
+            sx={{ width: "100%", justifyContent: "center", display: "flex" }}
+          >
+            <Box
               sx={{
-                padding: 2,
+                width: "fit-content",
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
               }}
             >
-              <AddressCard address={address} />
-            </Grid>
-          ))}
-        </Grid>
-      )}
+              <Box mb={2} sx={{ display: "flex", justifyContent: "center" }}>
+                <img src="/assets/icons/list-icon.png" alt="" />
+              </Box>
+              <Typography>{t("Your Address Book Is Empty!")}</Typography>
+            </Box>
+          </Box>
+        ) : (
+          <Grid container>
+            {data?.getAddresses.map((address) => (
+              <Grid
+                item
+                key={address.id}
+                sm={3}
+                sx={{
+                  padding: 2,
+                }}
+              >
+                <AddressCard
+                  address={address}
+                  handleDeleteSuccess={handleRefetch}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )
+      ) : null}
     </Box>
   );
 };

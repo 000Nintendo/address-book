@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { Call, Edit, Delete } from "@mui/icons-material";
 import {
   Box,
@@ -14,12 +15,16 @@ import {
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { IAddressData } from "../../@types/interfaces";
+import { DELETE_ADDRESS } from "../../graphql/queries/address";
 import { addressActions } from "../../redux/features/addresse";
+import { Toast } from "../../utils/toast";
 
 interface IAddressCard {
   address: IAddressData;
+  handleDeleteSuccess: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,7 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const AddressCard = ({ address }: IAddressCard) => {
+const AddressCard = ({ address, handleDeleteSuccess }: IAddressCard) => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -46,6 +52,25 @@ const AddressCard = ({ address }: IAddressCard) => {
       conformationModalState: isOpen,
     });
   };
+
+  const [deleteAddress, { loading }] = useMutation<{
+    deleteAddress: {
+      status: boolean;
+    };
+  }>(DELETE_ADDRESS, {
+    onCompleted(data) {
+      console.log(data);
+      if (data?.deleteAddress?.status) {
+        handleDeleteConformationModal(false);
+        if (handleDeleteSuccess) handleDeleteSuccess();
+        return;
+      }
+    },
+    onError(error) {
+      console.log(error?.message);
+      Toast.error(error.message);
+    },
+  });
 
   const handleEdit = () => {
     dispatch(
@@ -67,7 +92,7 @@ const AddressCard = ({ address }: IAddressCard) => {
       >
         <DialogContent sx={{}}>
           <Typography align="center" variant="h5">
-            Are you sure to delete
+            {t("Are you sure to delete")}
           </Typography>
           <br />
           <br />
@@ -85,19 +110,33 @@ const AddressCard = ({ address }: IAddressCard) => {
                 height: "40px",
                 marginRight: 2,
               }}
+              onClick={() =>
+                deleteAddress({
+                  variables: {
+                    input: {
+                      id: address.id,
+                    },
+                  },
+                })
+              }
             >
-              <Box sx={{ position: "relative", marginRight: 2 }}>
-                <CircularProgress size="20px" className={classes.progressBar} />
-              </Box>
+              {loading ? (
+                <Box sx={{ position: "relative", marginRight: 2 }}>
+                  <CircularProgress
+                    size="20px"
+                    className={classes.progressBar}
+                  />
+                </Box>
+              ) : null}
 
-              <Typography>Delete</Typography>
+              <Typography>{t("Delete")}</Typography>
             </Button>
 
             <Button
               variant="outlined"
               onClick={() => handleDeleteConformationModal(false)}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
           </Box>
         </DialogContent>

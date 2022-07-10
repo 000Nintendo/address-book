@@ -6,7 +6,6 @@ import { persistedStore } from './redux/persistedStore'
 import { store } from './redux/store'
 
 
-// eslint-disable-next-line react/prop-types
 const PersistedWrapper = ({ children }) => {
     return (
         <Provider store={store}>    
@@ -17,7 +16,7 @@ const PersistedWrapper = ({ children }) => {
     )
 }
 
-PersistedWrapper.PropTypes = {
+PersistedWrapper.propTypes = {
     children: PropTypes.any
 }
 

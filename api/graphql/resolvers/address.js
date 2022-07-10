@@ -64,5 +64,15 @@ module.exports = {
                 status: Boolean(deleted),
             };
         },
+
+        getAddress: async (parent, { input }, context, info) => {
+            const values = inputValidator(input, AddressValicationSchema.getAddress);
+
+            const address = await Address.findById({ _id: values.id });
+
+            if (!address) throw resourceNotFound(RESOURCES.ADDRESS_TITLE);
+
+            return address
+        }
     },
 };

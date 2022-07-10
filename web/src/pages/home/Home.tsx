@@ -2,9 +2,9 @@ import { Box, Button } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
 import { Theme } from "@mui/system";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import LayoutContainer from "../../components/layout/LayoutContainer";
-import AddAddressModal from "../../components/modals/AddAddressModal";
 import { addressActions } from "../../redux/features/addresse";
 import AddressList from "./AddressList";
 
@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Home = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -29,7 +30,6 @@ const Home = () => {
 
   return (
     <Box>
-      <AddAddressModal />
       <LayoutContainer>
         <Box className={classes.addAddressContainer} mt={3}>
           <Box sx={{ padding: "0px 20px" }}>
@@ -38,7 +38,7 @@ const Home = () => {
               variant="contained"
               onClick={openAddUpdateAddressModal}
             >
-              Add new address
+              {t("Add new address")}
             </Button>
           </Box>
 

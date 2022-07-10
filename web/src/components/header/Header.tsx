@@ -14,8 +14,11 @@ import {
   Typography,
 } from "@mui/material";
 import { createStyles, makeStyles } from "@mui/styles";
-
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { translationActions } from "../../redux/features/translation";
+import { languageSelector } from "../../redux/selectors/translation";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,7 +41,9 @@ const langulages = [
 
 const Header = () => {
   const classes = useStyles();
-
+  const language = useSelector(languageSelector);
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [state, setState] = useState({
     languageAnchor: null,
   });
@@ -54,6 +59,15 @@ const Header = () => {
     setState({
       languageAnchor: null,
     });
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    dispatch(
+      translationActions.changeLanguage({
+        lang: lang,
+      })
+    );
+    openLanguageMenu({ event: null });
   };
 
   return (
@@ -85,21 +99,28 @@ const Header = () => {
                   textTransform: "uppercase",
                 }}
               >
-                Address Book
+                {t("Address Book")}
               </Typography>
             </Grid>
 
             <Grid item>
               <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Change language">
-                  <IconButton
+                <Tooltip title={t("Change language")}>
+                  <Box
                     onClick={(event) => {
                       openLanguageMenu({ event });
                     }}
-                    sx={{ p: 0 }}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
                   >
-                    <Translate className={classes.translateIcon} />
-                  </IconButton>
+                    <Box mr={1}>{language}</Box>
+                    <IconButton sx={{ p: 0 }}>
+                      <Translate className={classes.translateIcon} />
+                    </IconButton>
+                  </Box>
                 </Tooltip>
                 <Menu
                   sx={{ mt: "45px" }}
@@ -120,7 +141,7 @@ const Header = () => {
                   {langulages.map((lang) => (
                     <MenuItem
                       key={lang.value}
-                      onClick={() => openLanguageMenu({ event: null })}
+                      onClick={() => handleLanguageChange(lang.value)}
                     >
                       <Typography textAlign="center">{lang.label}</Typography>
                     </MenuItem>
@@ -129,43 +150,6 @@ const Header = () => {
               </Box>
             </Grid>
           </Grid>
-
-          {/* <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box> */}
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -185,17 +169,6 @@ const Header = () => {
           >
             LOGO
           </Typography>
-          {/* <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box> */}
         </Toolbar>
       </Container>
     </AppBar>

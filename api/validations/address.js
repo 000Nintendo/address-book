@@ -16,6 +16,10 @@ class AddressValicationSchema {
         phone: Joi.string().length(10)
     })
 
+    static getAddress = Joi.object({
+        id: Joi.string().required("Id is required!"),
+    })
+
 }
 
 
